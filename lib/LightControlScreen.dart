@@ -13,70 +13,60 @@ class LightControlScreen extends StatefulWidget {
 
 class _LightControlScreenState extends State<LightControlScreen> {
 
-  bool isLightOn = false;
-  final String serverUrl = 'http://$ipconfig';
+  bool ledState = false;
+  final String serverUrl = "https://motobackend.onrender.com"; 
 
-  Future<void> toggleLight(bool turnOn) async {
-    String url = turnOn ? '$serverUrl/on' : '$serverUrl/off';
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        setState(() => isLightOn = turnOn);
-      } else {
-        showError('Failed to update light status');
-      }
-    } catch (e) {
-      showError('Error: $e');
+  Future<void> toggleLED(bool state) async {
+    final response = await http.post(
+      Uri.parse("$serverUrl/toggle"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"state": state}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        ledState = state;
+      });
     }
   }
 
-  Future<void> getLightStatus() async {
-    try {
-      final response = await http.get(Uri.parse('$serverUrl/status'));
-      if (response.statusCode == 200) {
-        setState(() => isLightOn = json.decode(response.body)['status'] == 'on');
-      }
-    } catch (e) {
-      showError('Error fetching status');
-    }
-  }
+  Future<void> fetchLEDStatus() async {
+    final response = await http.get(Uri.parse("$serverUrl/status"));
 
-  void showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        ledState = data["state"];
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    getLightStatus();
+    fetchLEDStatus(); // Fetch initial state on startup
   }
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
-      appBar: AppBar(title: Text('MOTOCONTROLLER')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isLightOn ? Icons.lightbulb : Icons.lightbulb_outline,
-              size: 100,
-              color: isLightOn ? Colors.yellow : Colors.grey,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => toggleLight(true),
-              child: Text('Turn ON'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => toggleLight(false),
-              child: Text('Turn OFF'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            ),
-          ],
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text("ESP32 LED Control")),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "LED is ${ledState ? "ON" : "OFF"}",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => toggleLED(!ledState),
+                child: Text(ledState ? "Turn OFF" : "Turn ON"),
+              ),
+            ],
+          ),
         ),
       ),
     );
