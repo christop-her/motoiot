@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:moto/LightControlScreen.dart';
+import 'package:moto/homescreen.dart';
+import 'package:moto/recipelist.dart';
 
 
 
@@ -11,6 +14,9 @@ class NavBar extends StatefulWidget {
 class NavBarState extends State<NavBar> { 
 
   final _pages = [
+    SmartScreen(),
+    LightControlScreen(),
+    RecipeScreen()
     // firstPage_2(),
     // Selectstore(),
     // umessage_tab_all(),
@@ -34,33 +40,20 @@ class NavBarState extends State<NavBar> {
         TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         items: [
           BottomNavigationBarItem(
-            label: '',
-            icon: Image.asset(
-              _currentIndex == 0 ? 'images/s1.png' : 'images/Home.png',
-              height: 24,
-            ),
+            label: 'Control',
+            icon: Icon(Icons.gamepad_rounded)
           ),
           BottomNavigationBarItem(
-            label: '',
-            icon: Image.asset(
-              _currentIndex == 1 ? 'images/s2.png' : 'images/Message.png',
-              height: 24,
-            ),
+            label: 'GPS Tracker',
+            icon: Icon(Icons.location_on)
           ),
+
           BottomNavigationBarItem(
-            label: '',
-            icon: Image.asset(
-              _currentIndex == 2 ? 'images/Cal.png' : 'images/Calendar.png',
-              height: 24,
-            ),
+            label: 'Profile',
+            icon: Icon(Icons.person)
           ),
-          BottomNavigationBarItem(
-            label: '',
-            icon: Image.asset(
-              _currentIndex == 3 ? 'images/s3.png' : 'images/Profile.png',
-              height: 24,
-            ),
-          ),
+     
+          
         ],
         onTap: (index) {
           setState(() {

@@ -44,7 +44,6 @@ class _LightControlScreenState extends State<LightControlScreen> {
   @override
   void initState() {
     super.initState();
-    fetchLEDStatus(); // Fetch initial state on startup
   }
 
   @override

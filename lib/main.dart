@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moto/LightControlScreen.dart';
+import 'package:moto/homescreen.dart';
 import 'package:moto/login.dart';
+import 'package:moto/navbar.dart';
 import 'package:moto/onboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -68,7 +70,7 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
             ),
             // home: pass == '2' ? const mobilefirstPage_2() : const Screen1(),
-            home: LightControlScreen(),
+            home: NavBar(),
           );
         }
 }
