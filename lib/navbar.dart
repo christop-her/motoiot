@@ -14,9 +14,10 @@ class NavBar extends StatefulWidget {
 class NavBarState extends State<NavBar> { 
 
   final _pages = [
-    SmartScreen(),
-    LightControlScreen(),
-    RecipeScreen()
+    RecipeScreen(),
+    // SmartScreen(),
+    VoiceChatScreen()
+    // LightControlScreen(),
     // firstPage_2(),
     // Selectstore(),
     // umessage_tab_all(),
@@ -39,19 +40,22 @@ class NavBarState extends State<NavBar> {
         selectedLabelStyle:
         TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         items: [
+
+           BottomNavigationBarItem(
+            label: 'Select',
+            icon: Icon(Icons.food_bank)
+          ),
+          
           BottomNavigationBarItem(
-            label: 'Control',
+            label: 'Voice',
             icon: Icon(Icons.gamepad_rounded)
           ),
-          BottomNavigationBarItem(
-            label: 'GPS Tracker',
-            icon: Icon(Icons.location_on)
-          ),
+          // BottomNavigationBarItem(
+          //   label: 'GPS Tracker',
+          //   icon: Icon(Icons.location_on)
+          // ),
 
-          BottomNavigationBarItem(
-            label: 'Profile',
-            icon: Icon(Icons.person)
-          ),
+         
      
           
         ],

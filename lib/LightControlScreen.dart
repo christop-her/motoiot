@@ -1,71 +1,97 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:moto/ipconfig.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:flutter_tts/flutter_tts.dart';
 
-class LightControlScreen extends StatefulWidget {
-  const LightControlScreen({super.key});
-
+class VoiceChatScreen extends StatefulWidget {
   @override
-  State<LightControlScreen> createState() => _LightControlScreenState();
+  _VoiceChatScreenState createState() => _VoiceChatScreenState();
 }
 
-class _LightControlScreenState extends State<LightControlScreen> {
-
-  bool ledState = false;
-  final String serverUrl = "https://motobackend.onrender.com"; 
-
-  Future<void> toggleLED(bool state) async {
-    final response = await http.post(
-      Uri.parse("$serverUrl/toggle"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"state": state}),
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        ledState = state;
-      });
-    }
-  }
-
-  Future<void> fetchLEDStatus() async {
-    final response = await http.get(Uri.parse("$serverUrl/status"));
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        ledState = data["state"];
-      });
-    }
-  }
+class _VoiceChatScreenState extends State<VoiceChatScreen> {
+  late stt.SpeechToText _speech;
+  late FlutterTts _tts;
+  bool _isListening = false;
+  String _userText = "";
 
   @override
   void initState() {
     super.initState();
+    _speech = stt.SpeechToText();
+    _tts = FlutterTts();
   }
+
+  void _startListening() async {
+    bool available = await _speech.initialize(
+      onStatus: (status) => print("Speech status: $status"),
+      onError: (error) => print("Speech error: $error"),
+    );
+
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(onResult: (result) {
+        setState(() {
+          _userText = result.recognizedWords;
+        });
+
+        if (result.finalResult) {
+          _respondToUser(_userText.toLowerCase());
+        }
+      });
+    }
+  }
+
+  void _stopListening() {
+    _speech.stop();
+    setState(() => _isListening = false);
+  }
+
+  void _respondToUser(String command) async {
+    String reply = "I didn't understand that.";
+
+    if (command.contains("get 2k")) {
+      reply = "Okay, turning the LED on.";
+    } else if (command.contains("turn off")) {
+      reply = "Alright, turning the LED off.";
+    } else if (command.contains("hello")) {
+      reply = "Hi there! How can I help you today?";
+    }
+
+    // Speak the reply
+    await _tts.speak(reply);
+  }
+
+// void _respondToUser(String command) async {
+//     String reply = "I didn't understand that.";
+
+//     if (command.contains("turn on")) {
+//       reply = "Okay, turning the LED on.";
+//     } else if (command.contains("turn off")) {
+//       reply = "Alright, turning the LED off.";
+//     } else if (command.contains("hello")) {
+//       reply = "Hi there! How can I help you today?";
+//     }
+
+//     // Speak the reply
+//     await _tts.speak(reply);
+//   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text("ESP32 LED Control")),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "LED is ${ledState ? "ON" : "OFF"}",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => toggleLED(!ledState),
-                child: Text(ledState ? "Turn OFF" : "Turn ON"),
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(title: Text("Voice Chat")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_userText.isEmpty ? "Say something..." : _userText,
+                style: TextStyle(fontSize: 20)),
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
+              label: Text(_isListening ? "Stop" : "Start Talking"),
+              onPressed: _isListening ? _stopListening : _startListening,
+            ),
+          ],
         ),
       ),
     );

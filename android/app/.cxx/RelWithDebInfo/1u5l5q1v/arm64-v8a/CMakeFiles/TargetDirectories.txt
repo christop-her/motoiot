@@ -1,0 +1,2 @@
+C:/Users/HP/kitchen/moto/android/app/.cxx/RelWithDebInfo/1u5l5q1v/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/HP/kitchen/moto/android/app/.cxx/RelWithDebInfo/1u5l5q1v/arm64-v8a/CMakeFiles/rebuild_cache.dir

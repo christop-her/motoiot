@@ -137,7 +137,21 @@ class RecipeScreen extends StatelessWidget {
                               text: recipe.difficulty,
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => RecipeDetailScreen(
+      recipeName: recipe.name,
+      imageUrl: recipe.image,
+      duration: recipe.duration,
+      ingredients: ['Pasta', 'pepper', 'seasoning', 'Tomato', '2 eggs'],
+      containerA: ['2 eggs', 'Tomato'],
+      containerB: ['Pasta', 'pepper', 'seasoning', 'Tomato'],
+    ),
+  ),
+);
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.yellow[700],
                                 foregroundColor: Colors.black,

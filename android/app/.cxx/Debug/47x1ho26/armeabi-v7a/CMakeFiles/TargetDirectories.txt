@@ -1,0 +1,2 @@
+C:/Users/HP/kitchen/moto/android/app/.cxx/Debug/47x1ho26/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/HP/kitchen/moto/android/app/.cxx/Debug/47x1ho26/armeabi-v7a/CMakeFiles/rebuild_cache.dir
