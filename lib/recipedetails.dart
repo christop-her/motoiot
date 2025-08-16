@@ -27,9 +27,32 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+
+
+  String irStatus = "Waiting..."; // UI text for IR status
+  Timer? _irTimer;
+
   bool isCooking = false;
   int remainingSeconds = 100; // Change this to desired countdown duration
   Timer? _timer;
+
+
+  Future<void> fetchIRStatus() async {
+  final response = await http.get(Uri.parse("$serverUrl/detection"));
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    setState(() {
+      irStatus = data["status"] == "detected" ? "Object Detected!" : "No Object";
+    });
+  }
+}
+
+void startIRPolling() {
+  _irTimer?.cancel();
+  _irTimer = Timer.periodic(Duration(seconds: 1), (_) {
+    fetchIRStatus();
+  });
+}
 
   void startTimer() {
   setState(() {
@@ -44,6 +67,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       } else {
         timer.cancel();
         isCooking = false; // Show "Start Cooking" again
+        toggleLED(false);
 
         // ✅ Show completion dialog here
         showDialog(
@@ -147,6 +171,7 @@ Future<void> fetchdata() async {
   @override
   void dispose() {
     _timer?.cancel();
+  _irTimer?.cancel();
     super.dispose();
   }
 
@@ -258,8 +283,14 @@ Future<void> fetchdata() async {
                     ),
                   ),
 
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
+Text(
+  "IR Status: $irStatus",
+  style: TextStyle(color: Colors.white, fontSize: 18),
+),
 
+                  SizedBox(height: 30),
+        
                   // Action Button or Timer
                   Center(
                     child: isCooking
@@ -281,8 +312,8 @@ Future<void> fetchdata() async {
                           )
                         : ElevatedButton.icon(
                             onPressed:(){
-                              toggleLED(!ledState);
-                              
+                              toggleLED(false);
+                              startIRPolling(); // start fetching detection updates
                             } ,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.yellow[700],
