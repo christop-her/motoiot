@@ -312,7 +312,7 @@ Text(
                           )
                         : ElevatedButton.icon(
                             onPressed:(){
-                              toggleLED(false);
+                              toggleLED(true);
                               startIRPolling(); // start fetching detection updates
                             } ,
                             style: ElevatedButton.styleFrom(

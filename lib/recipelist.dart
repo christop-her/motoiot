@@ -7,6 +7,9 @@ class Recipe {
   final String description;
   final String duration;
   final String difficulty;
+  final List<String> ingredients;
+  final List<String> containerA;
+  final List<String> containerB;
 
   Recipe({
     required this.name,
@@ -14,6 +17,9 @@ class Recipe {
     required this.description,
     required this.duration,
     required this.difficulty,
+    required this.ingredients,
+    required this.containerA,
+    required this.containerB,
   });
 }
 
@@ -22,16 +28,22 @@ class RecipeScreen extends StatelessWidget {
     Recipe(
       name: 'Indomie noodles',
       image: 'images/maxresdefault.jpg',
-      description: 'A delicious creamy Alfredo pasta.',
+      description: 'Quick and tasty instant noodles.',
       duration: '25 mins',
       difficulty: 'Easy',
+      ingredients: ['Indomie pack', 'Pepper', 'Seasoning', 'Tomato', '2 Eggs'],
+      containerA: ['2 Eggs', 'Tomato'],
+      containerB: ['Indomie pack', 'Pepper', 'Seasoning'],
     ),
     Recipe(
       name: 'Egg Fried Rice',
       image: 'images/eggrice.jpg',
-      description: 'Grilled chicken with spicy marinade.',
+      description: 'Classic fried rice with eggs.',
       duration: '45 mins',
       difficulty: 'Medium',
+      ingredients: ['Rice', '2 Eggs', 'Vegetable Oil', 'Spring Onions', 'Soy Sauce'],
+      containerA: ['2 Eggs', 'Spring Onions'],
+      containerB: ['Rice', 'Vegetable Oil', 'Soy Sauce'],
     ),
     Recipe(
       name: 'Baked Beans',
@@ -39,8 +51,10 @@ class RecipeScreen extends StatelessWidget {
       description: 'A healthy plant-based dish.',
       duration: '30 mins',
       difficulty: 'Easy',
+      ingredients: ['Beans', 'Onion', 'Palm Oil', 'Pepper', 'Salt'],
+      containerA: ['Beans', 'Onion'],
+      containerB: ['Palm Oil', 'Pepper', 'Salt'],
     ),
-    // Add more items as needed
   ];
 
   @override
@@ -66,21 +80,21 @@ class RecipeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final recipe = recipes[index];
           return GestureDetector(
-            onTap: () {Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => RecipeDetailScreen(
-      recipeName: recipe.name,
-      imageUrl: recipe.image,
-      duration: recipe.duration,
-      ingredients: ['Pasta', 'Cream', 'Garlic', 'Parmesan'],
-      containerA: ['Cream', 'Garlic'],
-      containerB: ['Pasta', 'Parmesan'],
-    ),
-  ),
-);
-            }
-,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RecipeDetailScreen(
+                    recipeName: recipe.name,
+                    imageUrl: recipe.image,
+                    duration: recipe.duration,
+                    ingredients: recipe.ingredients,
+                    containerA: recipe.containerA,
+                    containerB: recipe.containerB,
+                  ),
+                ),
+              );
+            },
             child: Container(
               margin: EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
@@ -139,18 +153,18 @@ class RecipeScreen extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => RecipeDetailScreen(
-      recipeName: recipe.name,
-      imageUrl: recipe.image,
-      duration: recipe.duration,
-      ingredients: ['Pasta', 'pepper', 'seasoning', 'Tomato', '2 eggs'],
-      containerA: ['2 eggs', 'Tomato'],
-      containerB: ['Pasta', 'pepper', 'seasoning', 'Tomato'],
-    ),
-  ),
-);
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RecipeDetailScreen(
+                                      recipeName: recipe.name,
+                                      imageUrl: recipe.image,
+                                      duration: recipe.duration,
+                                      ingredients: recipe.ingredients,
+                                      containerA: recipe.containerA,
+                                      containerB: recipe.containerB,
+                                    ),
+                                  ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.yellow[700],
